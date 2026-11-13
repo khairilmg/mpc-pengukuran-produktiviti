@@ -1,0 +1,11 @@
+{
+  // Cloudflare Worker + fail statik + D1. Digunakan oleh Workers Builds (Git) dan `npx wrangler deploy`.
+  "name": "mpc-pengukuran-produktiviti",
+  "main": "worker.js",
+  "compatibility_date": "2025-01-01",
+  "assets": { "directory": "./public", "binding": "ASSETS" },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "mpc-produktiviti", "database_id": "31e87c5d-4af5-4544-94c6-cd96a29ac1cb" }
+  ],
+  "observability": { "enabled": true }
+}

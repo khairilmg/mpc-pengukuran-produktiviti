@@ -20,6 +20,8 @@ Aplikasi web untuk mengukur produktiviti syarikat bagi **Sistem Gaji Berasaskan 
 
 ```
 public/index.html          Frontend (dijana oleh build.sh — jangan edit terus)
+worker.js                  Titik masuk Worker (/api/* → API, lain-lain → public/)
+wrangler.jsonc             Konfigurasi Worker + D1
 functions/api/[[path]].js  API: log masuk, sesi, syarikat, admin, penanda aras, proksi Claude
 functions/_lib/calc.js     Logik pengiraan untuk pelayan (dijana oleh build.sh)
 src/                       Sumber frontend: p1.html (UI/CSS), p2.js (skema & pengiraan),
@@ -33,7 +35,17 @@ legacy/                    Versi lama untuk claude.ai artifact
 wrangler.toml.contoh       Contoh konfigurasi untuk deploy melalui CLI / pembangunan setempat
 ```
 
-## Deploy ke Cloudflare (papan pemuka + GitHub)
+## Deploy sebagai Cloudflare Worker (disyorkan)
+
+Projek ini mengandungi `worker.js` dan `wrangler.jsonc` (Worker `mpc-pengukuran-produktiviti`, fail statik dari `public/`, D1 `mpc-produktiviti`).
+
+1. Cipta D1 `mpc-produktiviti`, jalankan `schema.sql` (dan `data/seed-dummy.sql` jika mahu) di Console. Jika ID D1 anda berbeza, kemas kini `database_id` dalam `wrangler.jsonc`.
+2. Muat naik repositori ke GitHub.
+3. Di Cloudflare: **Workers & Pages → mpc-pengukuran-produktiviti → Settings → Build → Connect** ke repositori GitHub. Deploy command: `npx wrangler deploy`. Atau, dari komputer sendiri: `npx wrangler login` kemudian `npx wrangler deploy`.
+4. **Settings → Variables and Secrets**: tambah `ADMIN_SETUP_KEY` (Secret), dan pilihan `ANTHROPIC_API_KEY`, `CLAUDE_MODEL`, `AI_DAILY_LIMIT`.
+5. Deploy semula, kemudian sediakan Master Admin di tab Master Admin.
+
+## Alternatif: deploy sebagai Cloudflare Pages (papan pemuka + GitHub)
 
 Projek Cloudflare Pages yang dibuat dengan "drag and drop" **tidak menjalankan folder `functions/`**. Gunakan sambungan GitHub seperti di bawah.
 
