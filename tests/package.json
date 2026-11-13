@@ -1,0 +1,7 @@
+{
+  "name": "mpc-produktiviti-tests",
+  "private": true,
+  "description": "Ujian hujung-ke-hujung (Playwright) dengan wrangler pages dev setempat",
+  "scripts": { "test": "node e2e.js" },
+  "dependencies": { "playwright": "^1.48.0", "xlsx": "0.18.5", "pdfjs-dist": "3.11.174" }
+}

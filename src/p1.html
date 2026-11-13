@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sistem Pengukuran Produktiviti Syarikat (MPC)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<style>
+:root{
+  --bg:#f4f5f7; --surface:#fcfcfb; --surface-2:#ffffff; --line:#e1e2e0; --line-2:#cfd0cc;
+  --text:#0b0b0b; --text-2:#52514e; --muted:#7a7975;
+  --primary:#1c5cab; --primary-2:#2a78d6; --primary-bg:#e8f1fc;
+  --good:#0a7d0a; --good-bg:#e3f4e3; --warn:#8a5a00; --warn-bg:#fff4d6; --bad:#b42f2f; --bad-bg:#fbe6e6;
+  --ex:#fff1c2; --s1:#2a78d6; --s2:#eb6834;
+  --radius:10px; --shadow:0 1px 2px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#121211; --surface:#1a1a19; --surface-2:#222220; --line:#2f2f2c; --line-2:#3c3c39;
+    --text:#f0efec; --text-2:#c3c2b7; --muted:#9a998f; --primary:#5598e7; --primary-2:#3987e5; --primary-bg:#18283d;
+    --good:#5fcf5f; --good-bg:#16301a; --warn:#f2c14e; --warn-bg:#352a10; --bad:#ef7b7b; --bad-bg:#3a1717; --ex:#4a3d10;
+    --s1:#3987e5; --s2:#d95926; --shadow:none; }
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Arial,Helvetica,sans-serif;font-size:14px;color:var(--text);background:var(--bg);line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{margin:0 0 .4em;line-height:1.25} h1{font-size:22px} h2{font-size:18px} h3{font-size:15px}
+a{color:var(--primary)}
+.top{background:var(--surface-2);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.top-in{max-width:1280px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700}
+.logo{width:34px;height:34px;border-radius:8px;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:12px;letter-spacing:.5px}
+.brand small{display:block;font-weight:400;color:var(--text-2);font-size:12px}
+.spacer{flex:1}
+.who{font-size:13px;color:var(--text-2);text-align:right}
+.tabs{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;gap:4px;overflow-x:auto}
+.tab{border:0;background:none;padding:10px 14px;border-bottom:2px solid transparent;color:var(--text-2);cursor:pointer;white-space:nowrap}
+.tab.on{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+main{max-width:1280px;margin:0 auto;padding:20px}
+.card{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px 16px}
+label.f{display:block;font-size:13px;color:var(--text-2)}
+label.f span{display:block;margin-bottom:4px}
+input[type=text],input[type=password],input[type=number],input[type=email],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line-2);border-radius:8px;background:var(--surface);color:var(--text)}
+textarea{min-height:70px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--primary-2);outline-offset:-1px;border-color:transparent}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);background:var(--surface-2);padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600}
+.btn:hover{border-color:var(--primary-2)}
+.btn.p{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn.p:hover{background:var(--primary-2)}
+.btn.d{color:var(--bad);border-color:var(--bad)}
+.btn.sm{padding:4px 10px;font-size:12.5px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.muted{color:var(--text-2)} .small{font-size:12.5px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.b-good{background:var(--good-bg);color:var(--good)} .b-warn{background:var(--warn-bg);color:var(--warn)} .b-bad{background:var(--bad-bg);color:var(--bad)} .b-info{background:var(--primary-bg);color:var(--primary)} .b-mut{background:var(--line);color:var(--text-2)}
+.msg{padding:10px 14px;border-radius:8px;margin:0 0 12px}
+.msg.good{background:var(--good-bg);color:var(--good)} .msg.bad{background:var(--bad-bg);color:var(--bad)} .msg.warn{background:var(--warn-bg);color:var(--warn)} .msg.info{background:var(--primary-bg);color:var(--primary)}
+.login-wrap{min-height:calc(100vh - 70px);display:grid;place-items:center;padding:20px}
+.login{width:100%;max-width:440px}
+.seg{display:flex;background:var(--bg);border-radius:8px;padding:3px;margin-bottom:14px}
+.seg button{flex:1;border:0;background:none;padding:8px;border-radius:6px;cursor:pointer;color:var(--text-2)}
+.seg button.on{background:var(--surface-2);color:var(--text);font-weight:600;box-shadow:var(--shadow)}
+.stack>*+*{margin-top:12px}
+table{border-collapse:collapse;width:100%}
+.tbl-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px;max-height:72vh}
+table.dt th,table.dt td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:right;white-space:nowrap}
+table.dt th:first-child,table.dt td:first-child{text-align:left;white-space:normal;min-width:260px;position:sticky;left:0;background:var(--surface-2);z-index:1}
+table.dt thead th{position:sticky;top:0;background:var(--surface);z-index:2;font-size:13px}
+table.dt thead th:first-child{z-index:3;background:var(--surface)}
+table.dt tr.grp td{background:var(--bg);font-weight:700;color:var(--primary);text-align:left}
+table.dt tr.grp td:first-child{background:var(--bg)}
+table.dt tr.sum td{font-weight:600}
+table.dt tr.key td{background:var(--primary-bg)} table.dt tr.key td:first-child{background:var(--primary-bg)}
+table.dt td.in{padding:3px 4px}
+table.dt td.in input{text-align:right;padding:5px 7px;min-width:120px;font-variant-numeric:tabular-nums}
+table.dt td.ex input{background:var(--ex)}
+table.dt td.bad input{border-color:var(--bad)}
+.fl{font-size:13px}.fl small{display:block;color:var(--muted);font-size:11.5px}
+.req{color:var(--bad)}
+.num{font-variant-numeric:tabular-nums}
+.yearhead{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.x{border:0;background:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0}
+.x:hover{color:var(--bad)}
+.drop{display:block;border:2px dashed var(--line-2);border-radius:10px;padding:26px;text-align:center;background:var(--surface);cursor:pointer}
+.drop.over{border-color:var(--primary-2);background:var(--primary-bg)}
+.log{font-size:13px;margin:10px 0;padding:0;list-style:none}
+.log li{padding:3px 0}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.tile{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+.tile .v{font-size:26px;font-weight:700} .tile .l{color:var(--text-2);font-size:12.5px}
+table.lst th,table.lst td{border-bottom:1px solid var(--line);padding:8px;text-align:left;font-size:13px}
+table.lst tbody tr{cursor:pointer} table.lst tbody tr:hover{background:var(--primary-bg)}
+.chk{list-style:none;padding-left:0!important}.chk li{margin:4px 0}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);display:grid;place-items:center;z-index:50;padding:16px}
+.modal{background:var(--surface-2);border-radius:12px;max-width:520px;width:100%;padding:20px;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.cred{font-family:Consolas,monospace;font-size:16px;background:var(--bg);padding:10px;border-radius:8px;user-select:all}
+.chart-wrap{position:relative;max-width:760px}
+.chart-wrap svg{width:100%;height:auto;display:block}
+.tip{position:absolute;pointer-events:none;background:var(--surface-2);border:1px solid var(--line-2);border-radius:6px;padding:6px 9px;font-size:12px;box-shadow:var(--shadow);display:none;white-space:nowrap}
+.legend{display:flex;gap:16px;font-size:12.5px;color:var(--text-2);margin:4px 0 8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-2px}
+.hidden{display:none!important}
+.an-sec{margin:14px 0;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.an-sec p{margin:6px 0}
+.an-box{border-radius:10px;padding:12px 14px;border:1px solid var(--line)}
+.an-box.good{background:var(--good-bg)} .an-box.bad{background:var(--bad-bg)}
+.an-box ul{margin:4px 0;padding-left:18px} .an-box li{margin:4px 0}
+.an-md{max-width:900px} .an-md h3{margin:16px 0 6px;color:var(--primary)} .an-md li{margin:3px 0}
+.foot{max-width:1280px;margin:0 auto;padding:10px 20px 30px;color:var(--muted);font-size:12px}
+@media (max-width:640px){ main{padding:12px} .card{padding:14px} }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><div class="logo">MPC</div><div>Sistem Pengukuran Produktiviti Syarikat<small>Perbadanan Produktiviti Malaysia · PLWS</small></div></div>
+    <div class="spacer"></div>
+    <div class="who" id="who"></div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+<main id="main"><div class="card">Memuatkan sistem…</div></main>
+<div class="foot">Prototaip · Pertanyaan: espo@mpc.gov.my</div>
+<div id="modal"></div>

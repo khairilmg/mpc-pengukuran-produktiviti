@@ -1,0 +1,95 @@
+{
+ "companyId": "MPC-MK4R9T",
+ "name": "Kedai Makan Mak Teh Enterprise",
+ "ssm": "KT0123456-A",
+ "category": "MI",
+ "sector": "Penginapan & Perkhidmatan Makanan",
+ "subsector": "Restoran & katering kecil",
+ "address": "Kota Bharu, Kelantan",
+ "tel": "09-7400000",
+ "email": "makteh@example.com",
+ "officer": "Fatimah binti Hassan",
+ "website": "",
+ "account": "aktif",
+ "status": "draf",
+ "years": [
+  2021,
+  2022,
+  2023,
+  2024,
+  2025
+ ],
+ "data": {
+  "2021": {
+   "mi_av": 92000,
+   "mi_labour": 72000,
+   "mi_emp": 3,
+   "mi_sales": 168000
+  },
+  "2022": {
+   "mi_av": 112000,
+   "mi_labour": 96000,
+   "mi_emp": 4,
+   "mi_sales": 192000
+  },
+  "2023": {
+   "mi_av": 126000,
+   "mi_labour": 104000,
+   "mi_emp": 4,
+   "mi_sales": 215000
+  },
+  "2024": {
+   "mi_av": 121000,
+   "mi_labour": 108000,
+   "mi_emp": 4,
+   "mi_sales": 224000
+  },
+  "2025": {
+   "mi_av": 148000,
+   "mi_labour": 118000,
+   "mi_emp": 4,
+   "mi_sales": 251000
+  }
+ },
+ "src": {},
+ "phys": {
+  "2021": {
+   "waste_pct": 8.5,
+   "turnover": 33.3,
+   "absent": 2.5,
+   "customers": 42
+  },
+  "2022": {
+   "waste_pct": 7.9,
+   "turnover": 0,
+   "absent": 2.2,
+   "customers": 47
+  },
+  "2023": {
+   "waste_pct": 7.2,
+   "turnover": 25.0,
+   "absent": 2.0,
+   "customers": 51
+  },
+  "2024": {
+   "waste_pct": 7.6,
+   "turnover": 25.0,
+   "absent": 2.4,
+   "customers": 49
+  },
+  "2025": {
+   "waste_pct": 6.1,
+   "turnover": 0,
+   "absent": 1.8,
+   "customers": 56
+  }
+ },
+ "physCustom": [
+  {},
+  {},
+  {}
+ ],
+ "createdAt": "2026-11-13T03:50:00.000Z",
+ "updatedAt": "2026-11-13T03:50:00.000Z",
+ "createdBy": "Master Admin"
+}
